@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skyline - Weather & Travel Dashboard</title>
+
+  <!-- Bootstrap 5 (Unit III: Bootstrap grids, components, navigation) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Our own CSS (Unit I: external CSS file) -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation bar -->
+  <nav class="navbar navbar-expand-md border-bottom app-nav">
+    <div class="container">
+      <a class="navbar-brand brand" href="#">Skyline</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item"><a class="nav-link" href="#today">Today</a></li>
+          <li class="nav-item"><a class="nav-link" href="#forecast">7-day forecast</a></li>
+          <li class="nav-item"><a class="nav-link" href="#travel">Travel tips</a></li>
+          <li class="nav-item"><a class="nav-link" href="#favourites">Favourites</a></li>
+        </ul>
+        <div class="d-flex gap-2">
+          <div class="btn-group" role="group" aria-label="Temperature unit">
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="unitC">°C</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="unitF">°F</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="themeBtn" aria-label="Switch light or dark mode">Dark mode</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+
+    <!-- Search -->
+    <section class="mb-4">
+      <h1 class="visually-hidden">Weather and travel dashboard</h1>
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+          <form id="searchForm" class="position-relative" autocomplete="off">
+            <div class="input-group input-group-lg">
+              <input type="text" id="cityInput" class="form-control" placeholder="Search a city, e.g. Chennai, Paris, Tokyo" aria-label="City name">
+              <button class="btn btn-primary" type="submit">Search</button>
+              <button class="btn btn-outline-secondary" type="button" id="locBtn">Use my location</button>
+            </div>
+            <div id="suggestions" class="list-group suggestions d-none"></div>
+          </form>
+          <div id="alertBox" class="mt-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading -->
+    <div id="loading" class="text-center py-5 d-none">
+      <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="text-center py-5 text-secondary d-none">
+      <p class="fs-5 mb-1">Search for a city to see its weather.</p>
+      <p class="mb-0">Save the ones you check often as favourites.</p>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="d-none">
+
+      <!-- Today: the sky panel -->
+      <section id="today" class="sky mb-4" data-sky="clear-day">
+        <div class="row g-4 align-items-center">
+          <div class="col-12 col-md-7">
+            <div class="d-flex align-items-start justify-content-between">
+              <div>
+                <h2 class="place mb-0" id="placeName">-</h2>
+                <p class="place-sub mb-0" id="placeSub">-</p>
+              </div>
+              <button type="button" class="btn btn-light btn-sm" id="favBtn">Save to favourites</button>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-3">
+              <span class="big-icon" id="curIcon" aria-hidden="true"></span>
+              <span class="big-temp" id="curTemp">-</span>
+            </div>
+            <p class="cond mb-0" id="curCond">-</p>
+            <p class="place-sub mb-0" id="curFeels">-</p>
+          </div>
+          <div class="col-12 col-md-5">
+            <div class="row g-2" id="detailGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Travel tips -->
+      <section id="travel" class="mb-4">
+        <div class="card travel-card">
+          <div class="card-body p-4">
+            <div class="row g-4">
+              <div class="col-12 col-lg-5">
+                <h2 class="h4 mb-2">Travelling here today?</h2>
+                <p class="verdict mb-1" id="verdict">-</p>
+                <p class="text-secondary mb-0" id="verdictSub">-</p>
+              </div>
+              <div class="col-12 col-lg-7">
+                <h3 class="h6 mb-2">What to pack</h3>
+                <ul class="list-inline mb-3" id="packList"></ul>
+                <h3 class="h6 mb-2">Good to know</h3>
+                <ul class="mb-0 ps-3" id="tipList"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Forecast -->
+      <section id="forecast" class="mb-4">
+        <h2 class="h4 mb-3">7-day forecast</h2>
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-7 g-3" id="forecastRow"></div>
+      </section>
+    </div>
+
+    <!-- Favourites -->
+    <section id="favourites" class="mb-5">
+      <h2 class="h4 mb-3">Favourite cities</h2>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3" id="favRow"></div>
+      <p class="text-secondary mb-0 d-none" id="favEmpty">No favourites yet. Search a city and choose "Save to favourites".</p>
+    </section>
+  </main>
+
+  <footer class="border-top py-3 text-center text-secondary small">
+    Weather data from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key needed).
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Our own JavaScript (Unit II) -->
+  <script src="js/app.js"></script>
+</body>
+</html>
